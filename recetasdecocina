@@ -1,0 +1,186 @@
+package recetas.de.cocina;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class RecetasDeCocina {
+
+    public static class Ingrediente {
+        private String nombre;
+        private int id;
+
+        public Ingrediente(String nombre, int id) {
+            this.nombre = nombre;
+            this.id = id;
+        }
+
+        public String getNombre() {
+            return nombre;
+        }
+
+        public int getId() {
+            return id;
+        }
+    }
+
+    public static class PasoPreparacion {
+        private String descripcion;
+
+        public PasoPreparacion(String descripcion) {
+            this.descripcion = descripcion;
+        }
+
+        public String getDescripcion() {
+            return descripcion;
+        }
+    }
+
+    public static class Receta {
+        private String nombreReceta;
+        private String categoria;
+        private List<Ingrediente> ingredientes;
+        private List<PasoPreparacion> pasos;
+
+        public Receta(String nombreReceta, String categoria) {
+            this.nombreReceta = nombreReceta;
+            this.categoria = categoria;
+            this.ingredientes = new ArrayList<>();
+            this.pasos = new ArrayList<>();
+        }
+
+        public String getNombreReceta() {
+            return nombreReceta;
+        }
+
+        public String getCategoria() {
+            return categoria;
+        }
+
+        public List<Ingrediente> getIngredientes() {
+            return ingredientes;
+        }
+
+        public List<PasoPreparacion> getPasos() {
+            return pasos;
+        }
+    }
+
+    public static void main(String[] args) {
+        List<Receta> recetas = new ArrayList<>();
+        List<Ingrediente> ingredientes = new ArrayList<>();
+        Scanner scanner = new Scanner(System.in);
+        int ingredienteIdCounter = 1;
+
+        while (true) {
+            System.out.println("1. Crear receta");
+            System.out.println("2. Eliminar receta");
+            System.out.println("3. Visualizar recetas");
+            System.out.println("4. Buscar receta por nombre");
+            System.out.println("5. Salir");
+            System.out.print("Seleccione una opcion: ");
+            int opcion = scanner.nextInt();
+
+            switch (opcion) {
+                case 1:
+                    System.out.print("Ingrese el nombre de la receta: ");
+                    scanner.nextLine();
+                    String nombreReceta = scanner.nextLine();
+                    System.out.print("Ingrese la categoria de la receta: ");
+                    String categoria = scanner.nextLine();
+                    Receta nuevaReceta = new Receta(nombreReceta, categoria);
+
+                    while (true) {
+                        System.out.print("Ingrese el nombre del ingrediente (o 'fin' para terminar): ");
+                        String nombreIngrediente = scanner.nextLine();
+                        if (nombreIngrediente.equalsIgnoreCase("fin")) {
+                            break;
+                        }
+                        Ingrediente ingrediente = new Ingrediente(nombreIngrediente, ingredienteIdCounter);
+                        ingredientes.add(ingrediente);
+                        nuevaReceta.getIngredientes().add(ingrediente);
+                        ingredienteIdCounter++;
+                    }
+
+                    while (true) {
+                        System.out.print("Ingrese un paso de preparacion (o 'fin' para terminar): ");
+                        String paso = scanner.nextLine();
+                        if (paso.equalsIgnoreCase("fin")) {
+                            break;
+                        }
+                        nuevaReceta.getPasos().add(new PasoPreparacion(paso));
+                    }
+
+                    recetas.add(nuevaReceta);
+                    System.out.println("Receta creada exitosamente.");
+                    break;
+
+                case 2:
+                    System.out.println("Recetas disponibles:");
+                    for (int i = 0; i < recetas.size(); i++) {
+                        System.out.println((i + 1) + ". " + recetas.get(i).getNombreReceta());
+                    }
+                    System.out.print("Seleccione el numero de la receta a eliminar: ");
+                    int indiceEliminar = scanner.nextInt();
+                    if (indiceEliminar >= 1 && indiceEliminar <= recetas.size()) {
+                        recetas.remove(indiceEliminar - 1);
+                        System.out.println("Receta eliminada exitosamente.");
+                    } else {
+                        System.out.println("Opción invalida.");
+                    }
+                    break;
+
+                case 3:
+                    for (Receta r : recetas) {
+                        System.out.println("Receta: " + r.getNombreReceta());
+                        System.out.println("Categoria: " + r.getCategoria());
+                        System.out.println("Ingredientes:");
+                        for (Ingrediente i : r.getIngredientes()) {
+                            System.out.println("- " + i.getNombre());
+                        }
+                        System.out.println("Pasos de preparacion:");
+                        for (PasoPreparacion p : r.getPasos()) {
+                            System.out.println("- " + p.getDescripcion());
+                        }
+                        System.out.println();
+                    }
+                    break;
+
+                case 4:
+                    System.out.print("Ingrese el nombre de la receta a buscar: ");
+                    scanner.nextLine();
+                    String nombreBuscar = scanner.nextLine();
+                    boolean encontrada = false;
+                    for (Receta r : recetas) {
+                        if (r.getNombreReceta().equalsIgnoreCase(nombreBuscar)) {
+                            System.out.println("Receta encontrada:");
+                            System.out.println("Receta: " + r.getNombreReceta());
+                            System.out.println("Categoria: " + r.getCategoria());
+                            System.out.println("Ingredientes:");
+                            for (Ingrediente i : r.getIngredientes()) {
+                                System.out.println("- " + i.getNombre());
+                            }
+                            System.out.println("Pasos de preparacion:");
+                            for (PasoPreparacion p : r.getPasos()) {
+                                System.out.println("- " + p.getDescripcion());
+                            }
+                            System.out.println();
+                            encontrada = true;
+                            break;
+                        }
+                    }
+                    if (!encontrada) {
+                        System.out.println("Receta no encontrada.");
+                    }
+                    break;
+
+                case 5:
+                    System.out.println("Cerrando programa...");
+                    return;
+
+                default:
+                    System.out.println("Opcion invalida. Intente nuevamente.");
+            }
+        }
+    }
+}
